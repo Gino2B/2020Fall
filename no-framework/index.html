@@ -1,42 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />    <link href="./main.css" rel="stylesheet" />
-        <title>Test Page</title>
-    </head>
-    <body>
-    
-      <nav class="navbar" role="navigation" aria-label="main navigation">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.0/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />    <link href="./main.css" rel="stylesheet" />
+    <title>Test Page</title>
+</head>
+<body>
+
+    <nav class="navbar" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
           <a class="navbar-item" href="https://bulma.io">
             <img src="https://bulma.io/images/bulma-logo.png" width="112" height="28">
           </a>
-
+      
           <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
             <span aria-hidden="true"></span>
           </a>
         </div>
-
+      
         <div id="navbarBasicExample" class="navbar-menu">
           <div class="navbar-start">
             <a class="navbar-item">
               Home
             </a>
-
+      
             <a class="navbar-item">
               Documentation
             </a>
-
+      
             <div class="navbar-item has-dropdown is-hoverable">
               <a class="navbar-link">
                 More
               </a>
-
+      
               <div class="navbar-dropdown">
                 <a class="navbar-item">
                   About
@@ -54,7 +54,7 @@
               </div>
             </div>
           </div>
-
+      
           <div class="navbar-end">
             <div class="navbar-item">
               <div class="buttons">
@@ -103,13 +103,13 @@
                 <p class="panel-heading">
                   Your Cart
                 </p>
-
+                
                 <a class="panel-block is-active" v-for="x in cart">
                   <span class="panel-icon">
                     <i class="fas fa-book" aria-hidden="true"></i>
                   </span>
                   <span style="flex: 1;">{{x.name}}</span>
-
+                  
                   <span>
                       ${{x.price}}
                   </span>
@@ -120,28 +120,32 @@
                       <i class="fas fa-book" aria-hidden="true"></i>
                     </span>
                     <span style="flex: 1; font-weight: bold;">Total</span>
-
+                    
                     <span>
                         {{total()}}
                     </span>
                   </a>
-
+  
               </article>
         </div>
         </div>            
         </div>
 
     </div>
+ 
 
 
-        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-        <script src="main.js"></script>
-        <script>
-            var app = new Vue({
-                el: '#app',
-                data: {
-                    message: 'This is My  Test Page',
-                    size: 72,
+
+
+ 
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script src="main.js"></script>
+    <script>
+        var app = new Vue({
+            el: '#app',
+            data: {
+                message: 'This is My  Test Page',
+                size: 72,
                 inventory: [
                     { name: "SSD", description: "Play games and program when you want to", price: 60 },
                     { name: "Keyboard", description: "Don't run out of room", price: 200 },
@@ -150,18 +154,20 @@
                 ],
                 cart: []
             },
-                methods: {
-                    grow(){
-                        this.size += 5;
-                    },
-                    addToCart(name, price){
-                        this.cart.push({ name, price });
-                    },
-                    total(){
-                        return this.cart.reduce( (total, x)=> total += x.price, 0);
-                    }
+            methods: {
+                grow(){
+                    this.size += 5;
+                },
+                addToCart(name, price){
+                    this.cart.push({ name, price });
+                },
+                total(){
+                    return this.cart.reduce( (total, x)=> total += x.price, 0);
                 }
-            })
-        </script>
-    </body>
-    </html>
+            }
+        })
+    </script>
+
+
+</body>
+</html>
