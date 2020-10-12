@@ -51,7 +51,6 @@
             <router-link to="/login" class="button is-light">
                 Log in
             </router-link>
-          </a>
         </div>
       </div>
     </div>
