@@ -1,5 +1,5 @@
 <template>
-
+  
 <nav class="navbar container is-fixed-top is-info" role="navigation" aria-label="main navigation">
   <div class="navbar-brand">
     <a class="navbar-item" href="https://bulma.io">
@@ -13,18 +13,17 @@
     </a>
   </div>
 
-  <div id="navbarBasicExample" class="navbar-menu" :class="{ 'is-active': isActive }" >
+  <div id="navbarBasicExample" class="navbar-menu "  :class="{ 'is-active': isActive }">
     <div class="navbar-start">
-
-        <router-link to="/" class="navbar-item">Home</router-link> 
-        <router-link to="/about" class="navbar-item">About</router-link>
-        <router-link to="/feed" class="navbar-item">Feed</router-link>
+      <router-link to="/"  class="navbar-item" >Home</router-link>
+      <router-link to="/about"  class="navbar-item" >About</router-link>
+      <router-link to="/feed"  class="navbar-item" >Feed</router-link>
 
       <div class="navbar-item has-dropdown is-hoverable">
         <a class="navbar-link">
           More
         </a>
-       
+
         <div class="navbar-dropdown">
           <a class="navbar-item">
             About
@@ -41,6 +40,13 @@
           </a>
         </div>
       </div>
+      <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link"> Admin </a>
+
+        <div class="navbar-dropdown">
+          <router-link to="/users"  class="navbar-item" >Users</router-link>
+        </div>
+      </div>
     </div>
 
     <div class="navbar-end">
@@ -50,6 +56,7 @@
     </div>
   </div>
 </nav>
+
 
 </template>
 
@@ -61,9 +68,9 @@ export default {
       isActive: false
   }),
   methods: {
-    
+
   },
-  components : {
+  components: {
     LoginBadge
   }
 }
