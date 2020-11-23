@@ -11,18 +11,18 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 -- -----------------------------------------------------
 -- Table `Types`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Types` (
+CREATE TABLE IF NOT EXISTS `EX_Fall_2020_Types` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `created_at` DATETIME NOT NULL,
   `update_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `Name` VARCHAR(45) NOT NULL,
   `Type_id` INT NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_Types_Types1_idx` (`Type_id` ASC) ,
-  UNIQUE INDEX `Name_UNIQUE` (`Name` ASC) ,
-  CONSTRAINT `fk_Types_Types1`
+  INDEX `fk_EX_Fall_2020_Types_Types1_idx` (`Type_id` ASC) ,
+  UNIQUE INDEX `EX_Fall_2020_Name_UNIQUE` (`Name` ASC) ,
+  CONSTRAINT `fk_EX_Fall_2020_Types_Types1`
     FOREIGN KEY (`Type_id`)
-    REFERENCES `Types` (`id`)
+    REFERENCES `EX_Fall_2020_Types` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -31,7 +31,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `Users`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Users` (
+CREATE TABLE IF NOT EXISTS `EX_Fall_2020_Users` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `created_at` DATETIME NOT NULL,
   `update_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -41,10 +41,10 @@ CREATE TABLE IF NOT EXISTS `Users` (
   `Password` VARCHAR(45) NULL,
   `User_Type` INT NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_Users_Types1_idx` (`User_Type` ASC) ,
-  CONSTRAINT `fk_Users_Types1`
+  INDEX `fk_EX_Fall_2020_Users_Types1_idx` (`User_Type` ASC) ,
+  CONSTRAINT `fk_EX_Fall_2020_Users_Types1`
     FOREIGN KEY (`User_Type`)
-    REFERENCES `Types` (`id`)
+    REFERENCES `EX_Fall_2020_Types` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -53,7 +53,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `ContactMethods`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `ContactMethods` (
+CREATE TABLE IF NOT EXISTS `EX_Fall_2020_ContactMethods` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `created_at` DATETIME NOT NULL,
   `update_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -63,64 +63,136 @@ CREATE TABLE IF NOT EXISTS `ContactMethods` (
   `CanSpam` BIT NOT NULL DEFAULT 0,
   `User_id` INT NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_ContactMethods_Users_idx` (`User_id` ASC) ,
-  INDEX `fk_ContactMethod_Type_idx` (`Type` ASC) ,
-  CONSTRAINT `fk_ContactMethods_Users`
+  INDEX `fk_EX_Fall_2020_ContactMethods_Users_idx` (`User_id` ASC) ,
+  INDEX `fk_EX_Fall_2020_ContactMethod_Type_idx` (`Type` ASC) ,
+  CONSTRAINT `fk_EX_Fall_2020_ContactMethods_Users`
     FOREIGN KEY (`User_id`)
-    REFERENCES `Users` (`id`)
+    REFERENCES `EX_Fall_2020_Users` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_ContactMethod_Type`
+  CONSTRAINT `fk_EX_Fall_2020_ContactMethod_Type`
     FOREIGN KEY (`Type`)
-    REFERENCES `Types` (`Name`)
+    REFERENCES `EX_Fall_2020_Types` (`Name`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
 -- -----------------------------------------------------
--- Table `Posts`
+-- Table `Exercise_Types`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Posts` (
+CREATE TABLE IF NOT EXISTS `EX_Fall_2020_Exercise_Types` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `created_at` DATETIME NOT NULL,
   `update_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `URL` VARCHAR(2048) NULL,
-  `Text` VARCHAR(4000) NULL,
-  `Media_Type` VARCHAR(45) NOT NULL DEFAULT 'none',
-  `Privacy_Setting` INT NULL COMMENT '0 - hidden\n1 - only me\n2 - only friends\n4 - public',
-  `Owner_id` INT NOT NULL,
-  INDEX `fk_Posts_Users1_idx` (`Owner_id` ASC) ,
+  `Name` VARCHAR(45) NOT NULL,
+  `Type` VARCHAR(45) NOT NULL, -- Strength, Cardio, etc.
+  `Muscle_Group` VARCHAR(45) NOT NULL,
+  `Video_Url` VARCHAR(500) NOT NULL,
+  `Relative_Dificulty` FLOAT NOT NULL DEFAULT '1.0',
+
   PRIMARY KEY (`id`),
-  CONSTRAINT `fk_Posts_Users1`
-    FOREIGN KEY (`Owner_id`)
-    REFERENCES `Users` (`id`)
+  UNIQUE INDEX `ix_EX_Fall_2020_Exercise_Types_Name_UNIQUE` (`Name` ASC) ,
+  INDEX `fk_EX_Fall_2020_Exercise_Types_Types1_idx` (`Type` ASC) ,
+  CONSTRAINT `fk_EX_Fall_2020_Exercise_Types_Types1_Types1`
+    FOREIGN KEY (`Type`)
+    REFERENCES `EX_Fall_2020_Types` (`Name`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  INDEX `fk_EX_Fall_2020_Exercise_Types_Muscle_Group_idx` (`Muscle_Group` ASC) ,
+  CONSTRAINT `fk_EX_Fall_2020_Exercise_Types_Muscle_Group`
+    FOREIGN KEY (`Muscle_Group`)
+    REFERENCES `EX_Fall_2020_Types` (`Name`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
+
+-- -----------------------------------------------------
+-- Table `Workouts`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `EX_Fall_2020_Workouts` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `created_at` DATETIME NOT NULL,
+  `update_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `Owner_id` INT NOT NULL,
+  `Privacy_Setting` INT NULL COMMENT '0 - hidden\n1 - only me\n2 - only friends\n4 - public',
+  `Start_Time` DATETIME NOT NULL,
+  `End_Time` DATETIME NOT NULL,
+  `Exercise_Type` VARCHAR(45) NOT NULL,
+  `Note` VARCHAR(4000) NULL,
+
+  -- Cardio Session Detials
+  `Distance` FLOAT NULL, -- miles or fractions therof
+
+  -- Strength Session Details
+  `Sets` INT NULL,
+  `Reps_Per_Set` INT NULL,
+  `Weight` FLOAT NULL,
+
+  INDEX `fk_EX_Fall_2020_Workouts_Users1_idx` (`Owner_id` ASC) ,
+  INDEX `fk_EX_Fall_2020_Workout_Type_idx` (`Exercise_Type` ASC) ,
+  PRIMARY KEY (`id`),
+  CONSTRAINT `fk_EX_Fall_2020_Workout_Users1`
+    FOREIGN KEY (`Owner_id`)
+    REFERENCES `EX_Fall_2020_Users` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_EX_Fall_2020_Workout_Exercise_Types`
+    FOREIGN KEY (`Exercise_Type`)
+    REFERENCES `EX_Fall_2020_Exercise_Types` (`Name`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `Followers`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `EX_Fall_2020_Followers` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `created_at` DATETIME NOT NULL,
+  `update_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `Following_id` INT NOT NULL,
+  `Follower_id` INT NOT NULL,
+  `IsAccepted` BIT NOT NULL DEFAULT 0,
+
+  PRIMARY KEY (`id`),
+  INDEX `fk_EX_Fall_2020_Followers_Following_idx` (`Following_id` ASC) ,
+  CONSTRAINT `fk_EX_Fall_2020_Followers_Following`
+    FOREIGN KEY (`Following_id`)
+    REFERENCES `EX_Fall_2020_Users` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  INDEX `fk_EX_Fall_2020_Followers_Follower_idx` (`Follower_id` ASC) ,
+  CONSTRAINT `fk_EX_Fall_2020_Followers_Follower`
+    FOREIGN KEY (`Follower_id`)
+    REFERENCES `EX_Fall_2020_Users` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
 
 -- -----------------------------------------------------
 -- Table `Comments`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Comments` (
+CREATE TABLE IF NOT EXISTS `EX_Fall_2020_Comments` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `created_at` DATETIME NOT NULL,
   `update_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `Text` VARCHAR(4000) NULL,
-  `Post_id` INT NOT NULL,
+  `Workout_id` INT NOT NULL,
   `Owner_id` INT NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_Comments_Posts1_idx` (`Post_id` ASC) ,
-  INDEX `fk_Comments_Users1_idx` (`Owner_id` ASC) ,
-  CONSTRAINT `fk_Comments_Posts1`
-    FOREIGN KEY (`Post_id`)
-    REFERENCES `Posts` (`id`)
+  INDEX `fk_EX_Fall_2020_Comments_Workouts1_idx` (`Workout_id` ASC) ,
+  INDEX `fk_EX_Fall_2020_Comments_Users1_idx` (`Owner_id` ASC) ,
+  CONSTRAINT `fk_EX_Fall_2020_Comments_Workouts1`
+    FOREIGN KEY (`Workout_id`)
+    REFERENCES `EX_Fall_2020_Workouts` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Comments_Users1`
+  CONSTRAINT `fk_EX_Fall_2020_Comments_Users1`
     FOREIGN KEY (`Owner_id`)
-    REFERENCES `Users` (`id`)
+    REFERENCES `EX_Fall_2020_Users` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -129,24 +201,24 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `Reactions`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Reactions` (
+CREATE TABLE IF NOT EXISTS `EX_Fall_2020_Reactions` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `created_at` DATETIME NOT NULL,
   `update_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `Emoji` VARCHAR(2) NULL,
-  `Post_id` INT NOT NULL,
+  `Workout_id` INT NOT NULL,
   `Owner_id` INT NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_Comments_Posts1_idx` (`Post_id` ASC) ,
-  INDEX `fk_Comments_Users1_idx` (`Owner_id` ASC) ,
-  CONSTRAINT `fk_Comments_Posts10`
-    FOREIGN KEY (`Post_id`)
-    REFERENCES `Posts` (`id`)
+  INDEX `fk_EX_Fall_2020_Comments_Workouts1_idx` (`Workout_id` ASC) ,
+  INDEX `fk_EX_Fall_2020_Comments_Users1_idx` (`Owner_id` ASC) ,
+  CONSTRAINT `fk_EX_Fall_2020_Comments_Workouts10`
+    FOREIGN KEY (`Workout_id`)
+    REFERENCES `EX_Fall_2020_Workouts` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Comments_Users10`
+  CONSTRAINT `fk_EX_Fall_2020_Comments_Users10`
     FOREIGN KEY (`Owner_id`)
-    REFERENCES `Users` (`id`)
+    REFERENCES `EX_Fall_2020_Users` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -155,7 +227,7 @@ ENGINE = InnoDB;
 -- -----------------------------------------------------
 -- Table `Emojis`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `Emojis` (
+CREATE TABLE IF NOT EXISTS `EX_Fall_2020_Emojis` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `created_at` DATETIME NOT NULL,
   `update_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -164,12 +236,12 @@ CREATE TABLE IF NOT EXISTS `Emojis` (
   `Code` VARCHAR(2) NOT NULL,
   `Type_id` INT NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `Name_UNIQUE` (`Name` ASC) ,
-  UNIQUE INDEX `Code_UNIQUE` (`Code` ASC) ,
+  UNIQUE INDEX `EX_Fall_2020_Name_UNIQUE` (`Name` ASC) ,
+  UNIQUE INDEX `EX_Fall_2020_Code_UNIQUE` (`Code` ASC) ,
   INDEX `fk_Emojis_Types1_idx` (`Type_id` ASC) ,
-  CONSTRAINT `fk_Emojis_Types1`
+  CONSTRAINT `fk_EX_Fall_2020_Emojis_Types1`
     FOREIGN KEY (`Type_id`)
-    REFERENCES `Types` (`id`)
+    REFERENCES `EX_Fall_2020_Types` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
@@ -183,21 +255,21 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- Data for table `Types`
 -- -----------------------------------------------------
 START TRANSACTION;
-INSERT INTO `Types` (`id`, `created_at`, `update_at`, `Name`, `Type_id`) VALUES (1, 'Now()', DEFAULT, 'Types', 1);
-INSERT INTO `Types` (`id`, `created_at`, `update_at`, `Name`, `Type_id`) VALUES (2, 'Now()', DEFAULT, 'User Types', 1);
-INSERT INTO `Types` (`id`, `created_at`, `update_at`, `Name`, `Type_id`) VALUES (3, 'Now()', DEFAULT, 'Media Types', 1);
-INSERT INTO `Types` (`id`, `created_at`, `update_at`, `Name`, `Type_id`) VALUES (4, 'Now()', DEFAULT, 'Contact Method Types', 1);
-INSERT INTO `Types` (`id`, `created_at`, `update_at`, `Name`, `Type_id`) VALUES (20, 'Now()', DEFAULT, 'Emoji Types', 1);
-INSERT INTO `Types` (`id`, `created_at`, `update_at`, `Name`, `Type_id`) VALUES (5, 'Now()', DEFAULT, 'Admin', 2);
-INSERT INTO `Types` (`id`, `created_at`, `update_at`, `Name`, `Type_id`) VALUES (6, 'Now()', DEFAULT, 'User', 2);
-INSERT INTO `Types` (`id`, `created_at`, `update_at`, `Name`, `Type_id`) VALUES (DEFAULT, 'Now()', DEFAULT, 'image/gif', 3);
-INSERT INTO `Types` (`id`, `created_at`, `update_at`, `Name`, `Type_id`) VALUES (DEFAULT, 'Now()', DEFAULT, 'image/jpeg', 3);
-INSERT INTO `Types` (`id`, `created_at`, `update_at`, `Name`, `Type_id`) VALUES (DEFAULT, 'Now()', DEFAULT, 'image/png', 3);
-INSERT INTO `Types` (`id`, `created_at`, `update_at`, `Name`, `Type_id`) VALUES (DEFAULT, 'Now()', DEFAULT, 'video/webm', 3);
-INSERT INTO `Types` (`id`, `created_at`, `update_at`, `Name`, `Type_id`) VALUES (DEFAULT, 'Now()', DEFAULT, 'video/ogg', 3);
-INSERT INTO `Types` (`id`, `created_at`, `update_at`, `Name`, `Type_id`) VALUES (DEFAULT, 'Now()', DEFAULT, 'Email', 4);
-INSERT INTO `Types` (`id`, `created_at`, `update_at`, `Name`, `Type_id`) VALUES (DEFAULT, 'Now()', DEFAULT, 'Cell Phone', 4);
-INSERT INTO `Types` (`id`, `created_at`, `update_at`, `Name`, `Type_id`) VALUES (420, 'Now()', DEFAULT, 'Reactions', 20);
+INSERT INTO `EX_Fall_2020_Types` (`id`, `created_at`, `update_at`, `Name`, `Type_id`) VALUES (1, 'Now()', DEFAULT, 'Types', 1);
+INSERT INTO `EX_Fall_2020_Types` (`id`, `created_at`, `update_at`, `Name`, `Type_id`) VALUES (2, 'Now()', DEFAULT, 'User Types', 1);
+INSERT INTO `EX_Fall_2020_Types` (`id`, `created_at`, `update_at`, `Name`, `Type_id`) VALUES (3, 'Now()', DEFAULT, 'Media Types', 1);
+INSERT INTO `EX_Fall_2020_Types` (`id`, `created_at`, `update_at`, `Name`, `Type_id`) VALUES (4, 'Now()', DEFAULT, 'Contact Method Types', 1);
+INSERT INTO `EX_Fall_2020_Types` (`id`, `created_at`, `update_at`, `Name`, `Type_id`) VALUES (20, 'Now()', DEFAULT, 'Emoji Types', 1);
+INSERT INTO `EX_Fall_2020_Types` (`id`, `created_at`, `update_at`, `Name`, `Type_id`) VALUES (5, 'Now()', DEFAULT, 'Admin', 2);
+INSERT INTO `EX_Fall_2020_Types` (`id`, `created_at`, `update_at`, `Name`, `Type_id`) VALUES (6, 'Now()', DEFAULT, 'User', 2);
+INSERT INTO `EX_Fall_2020_Types` (`id`, `created_at`, `update_at`, `Name`, `Type_id`) VALUES (DEFAULT, 'Now()', DEFAULT, 'image/gif', 3);
+INSERT INTO `EX_Fall_2020_Types` (`id`, `created_at`, `update_at`, `Name`, `Type_id`) VALUES (DEFAULT, 'Now()', DEFAULT, 'image/jpeg', 3);
+INSERT INTO `EX_Fall_2020_Types` (`id`, `created_at`, `update_at`, `Name`, `Type_id`) VALUES (DEFAULT, 'Now()', DEFAULT, 'image/pngvideo', 3);
+INSERT INTO `EX_Fall_2020_Types` (`id`, `created_at`, `update_at`, `Name`, `Type_id`) VALUES (DEFAULT, 'Now()', DEFAULT, 'video/webm', 3);
+INSERT INTO `EX_Fall_2020_Types` (`id`, `created_at`, `update_at`, `Name`, `Type_id`) VALUES (DEFAULT, 'Now()', DEFAULT, 'video/ogg', 3);
+INSERT INTO `EX_Fall_2020_Types` (`id`, `created_at`, `update_at`, `Name`, `Type_id`) VALUES (DEFAULT, 'Now()', DEFAULT, 'Email', 4);
+INSERT INTO `EX_Fall_2020_Types` (`id`, `created_at`, `update_at`, `Name`, `Type_id`) VALUES (DEFAULT, 'Now()', DEFAULT, 'Cell Phone', 4);
+INSERT INTO `EX_Fall_2020_Types` (`id`, `created_at`, `update_at`, `Name`, `Type_id`) VALUES (420, 'Now()', DEFAULT, 'Reactions', 20);
 
 COMMIT;
 
@@ -206,5 +278,13 @@ COMMIT;
 -- Data for table `Emojis`
 -- -----------------------------------------------------
 START TRANSACTION;
-INSERT INTO `Emojis` (`id`, `created_at`, `update_at`, `Name`, `Description`, `Code`, `Type_id`) VALUES (DEFAULT, 'Now()', '', 'red_heart', 'red heart - U+2764', '❤️', 420);
+INSERT INTO `EX_Fall_2020_Emojis` (`id`, `created_at`, `update_at`, `Name`, `Description`, `Code`, `Type_id`) VALUES (DEFAULT, 'Now()', '', 'red_heart', 'red heart - U+2764', '❤️', 420);
 COMMIT;
+
+-- -----------------------------------------------------
+-- Other tables to think about
+-- -----------------------------------------------------
+
+-- Track water consumption
+-- Track weight ofer time
+-- Keep track of goals (and if/when the user reaches them)
